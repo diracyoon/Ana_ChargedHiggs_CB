@@ -5,7 +5,7 @@ INCLUDES = -I`root-config --incdir`
 
 lib_LTLIBRARIES = libAna_ChargedHiggs_CB.la
 
-include_HEADERS = Fitter_Test.h
+include_HEADERS = 
 
 noinst_HEADERS = Ana_ChargedHiggs_CB_LinkDef.h
 
@@ -18,7 +18,7 @@ libAna_ChargedHiggs_CB_la_LIBADD = \
         -L$(libdir)
 
 libAna_ChargedHiggs_CB_la_SOURCES = \
-  Fitter_Test.C \
+  Fitter_Performance.C \
   Ana_ChargedHiggs_CB_Dict.C
 
 BUILT_SOURCES = \
@@ -38,7 +38,7 @@ testexternals.C:
 	@echo '}' >> $@
 
 Ana_ChargedHiggs_CB_Dict.C: \
-  Fitter_Test.h \
+  Fitter_Performance.h \
   Ana_ChargedHiggs_CB_LinkDef.h
 	rootcling -f $@ -c $^
 
