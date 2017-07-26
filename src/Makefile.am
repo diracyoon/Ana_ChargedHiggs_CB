@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-AM_CXXFLAGS = -Wall -Werror -std=gnu++14 
+AM_CXXFLAGS = -Wall -Werror -std=gnu++14 -fPIC
 INCLUDES = -I`root-config --incdir`
 
 lib_LTLIBRARIES = libAna_ChargedHiggs_CB.la
@@ -15,7 +15,7 @@ AM_LDFLAGS = \
         -L$(libdir)
 
 libAna_ChargedHiggs_CB_la_LIBADD = \
-        -L$(libdir)
+        -L$(libdir) 
 
 libAna_ChargedHiggs_CB_la_SOURCES = \
   Fitter_Performance.C \
@@ -38,12 +38,13 @@ testexternals.C:
 	@echo '}' >> $@
 
 Ana_ChargedHiggs_CB_Dict.C: \
+  Const_Def.h \
   Fitter_Performance.h \
   Ana_ChargedHiggs_CB_LinkDef.h
-	rootcling -f $@ -c $^
+	rootcling -f $@ -I`root-config --incdir` -c $^
 
-install_pcm :
+pcm :
 	make install
 	cp Ana_ChargedHiggs_CB_Dict_rdict.pcm $(libdir)
 
-CLEANFILES = Ana_ChargedHiggs_CB_Dict.C Ana_ChargedHiggs_CB_Dict.h
+CLEANFILES = Ana_ChargedHiggs_CB_Dict.C Ana_ChargedHiggs_CB_Dict.h Ana_ChargedHiggs_CB_Dict_rdict.pcm
