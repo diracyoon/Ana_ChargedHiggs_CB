@@ -19,6 +19,7 @@ libAna_ChargedHiggs_CB_la_LIBADD = \
 
 libAna_ChargedHiggs_CB_la_SOURCES = \
   Fitter_Performance.C \
+  Jet_Selection_Performance.C \
   Ana_ChargedHiggs_CB_Dict.C
 
 BUILT_SOURCES = \
@@ -40,6 +41,7 @@ testexternals.C:
 Ana_ChargedHiggs_CB_Dict.C: \
   Const_Def.h \
   Fitter_Performance.h \
+  Jet_Selection_Performance.h \
   Ana_ChargedHiggs_CB_LinkDef.h
 	rootcling -f $@ -I`root-config --incdir` -c $^
 
