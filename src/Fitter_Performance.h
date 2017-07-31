@@ -27,9 +27,12 @@ class Fitter_Performance : public TObject
   void Compare_B_Pt_For_Additional_Constraint();
   void Compare_Dijet_Mass_For_Additional_Constraint();
   void Compare_Jet_Match_Prob_For_Additional_Constraint();
-  void Investigation_Fitter_Failure();
+  void Investigation_Fitter_Failure_2B();
+  void Investigation_Fitter_Failure_3B();
   void Reconstruction_Result_Chi2_2B();
   void Reconstruction_Result_Chi2_3B();
+  void Reconstruction_Result_Chi2_Piece_2B();
+  void Reconstruction_Result_Chi2_Piece_3B();
   void Reconstruction_Result_Neutrino();
   void Reconstruction_Result_Mass_2B();
   void Reconstruction_Result_Mass_3B();

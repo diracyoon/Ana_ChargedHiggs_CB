@@ -181,10 +181,152 @@ void Fitter_Performance::Compare_Jet_Match_Prob_For_Additional_Constraint()
 
 //////////
 
-void Fitter_Performance::Investigation_Fitter_Failure()
+void Fitter_Performance::Investigation_Fitter_Failure_2B()
 {
+  TGraph gr_reason_chi2_2b;
+  TGraph gr_reason_bjet_config_2b;
+  TGraph gr_gereuk_2b;
+  
+  TH1D* h_reason_chi2_2b[N_SAMPLE];
+  TH1D* h_prob_2b[N_SAMPLE];
+  for(Int_t i=0; i<N_SAMPLE; i++)
+    {
+      TFile* fin_target = fin[0][i];
+      
+      h_reason_chi2_2b[i] = (TH1D*)fin_target->Get("Jet_Permutation_Match_Fail_Reason_2B");
+      h_prob_2b[i] = (TH1D*)fin_target->Get("Jet_Permutation_Match_2B");
+      
+      Double_t gereuk_2b = (1-h_prob_2b[i]->GetMean())*h_reason_chi2_2b[i]->GetMean();
+
+      if(i==0)
+	{
+	  cout << "Investigation_Fitter_Failure_2B"<< endl;
+	  cout << endl;
+	  cout << "2B event" << endl;
+	  cout << "fail due to b-tagged jet config = " <<  1-h_reason_chi2_2b[i]->GetMean() << endl;
+	  cout << "fail due to chi2 = " << h_reason_chi2_2b[i]->GetMean() << endl;
+	  cout << "chicken ribs = " << gereuk_2b << endl;
+	}
+      else
+	{
+	  gr_reason_chi2_2b.SetPoint(gr_reason_chi2_2b.GetN(), signal_mass[i-1].Atof(), h_reason_chi2_2b[i]->GetMean());
+	  gr_reason_bjet_config_2b.SetPoint(gr_reason_bjet_config_2b.GetN(), signal_mass[i-1].Atof(), 1-h_reason_chi2_2b[i]->GetMean());
+	  gr_gereuk_2b.SetPoint(gr_gereuk_2b.GetN(), signal_mass[i-1].Atof(), gereuk_2b);	  
+	}
+    }
+  
+  //draw 2b events
+  TCanvas can_2b("can_2b", "can_2b", 800, 500);
+  can_2b.Draw();
+
+  gr_reason_chi2_2b.SetTitle("Reason of fitter failure, space to improve the fitter 2B");
+  gr_reason_chi2_2b.GetXaxis()->SetTitle("h^{#pm} signal mass [GeV}");
+  gr_reason_chi2_2b.GetYaxis()->SetTitle("Fraction");
+  gr_reason_chi2_2b.GetYaxis()->SetRangeUser(0, 1);
+  
+  gr_reason_chi2_2b.SetMarkerStyle(29);
+  gr_reason_chi2_2b.SetMarkerColor(4);
+  gr_reason_chi2_2b.SetLineColor(4);
+  gr_reason_chi2_2b.Draw();
+  
+  gr_reason_bjet_config_2b.SetMarkerStyle(34);
+  gr_reason_bjet_config_2b.SetMarkerColor(6);
+  gr_reason_bjet_config_2b.SetLineColor(6);
+  gr_reason_bjet_config_2b.Draw("samepl");
+
+  gr_gereuk_2b.SetMarkerStyle(21);
+  gr_gereuk_2b.SetMarkerColor(8);
+  gr_gereuk_2b.SetLineColor(8);
+  gr_gereuk_2b.Draw("samepl");
+  
+  TLegend tl_2b(0.15, 0.55, 0.35, 0.7);
+  tl_2b.AddEntry(&gr_reason_bjet_config_2b, "Frac_{b-jet Config.}", "lp");
+  tl_2b.AddEntry(&gr_reason_chi2_2b, "Frac_{#chi^{2} Eval.}", "lp");
+  tl_2b.AddEntry(&gr_gereuk_2b, "Chicken ribs", "lp");
+  tl_2b.Draw("same");
+  
+  can_2b.Print("Fitter_Fail_Reason_2B."+extension, extension);
+ 
   return;
-}//void Fitter_Performance::Investigation_Fitter_Failure()
+}//void Fitter_Performance::Investigation_Fitter_Failure_2B()
+
+//////////
+
+void Fitter_Performance::Investigation_Fitter_Failure_3B()
+{
+  TGraph gr_reason_chi2_3b;
+  TGraph gr_reason_bjet_config_3b;
+  TGraph gr_gereuk_3b;
+
+  TH1D* h_reason_chi2_3b[N_SAMPLE+1];
+  TH1D* h_prob_3b[N_SAMPLE+1];
+  for(Int_t i=0; i<N_SAMPLE+1; i++)
+    {
+      TFile* fin_target = Get_Target_File(i);
+
+      h_reason_chi2_3b[i] = (TH1D*)fin_target->Get("Jet_Permutation_Match_Fail_Reason_3B");
+      h_prob_3b[i] = (TH1D*)fin_target->Get("Jet_Permutation_Match_3B");
+
+      Double_t gereuk_3b = (1-h_prob_3b[i]->GetMean())*h_reason_chi2_3b[i]->GetMean();
+      
+      if(i==0)
+	{
+	  cout << "Investigation_Fitter_Failure_3B" << endl;
+	  cout << endl;
+	  cout << "3B event low fitter" << endl;
+	  cout << "fail due to b-tagged jet config = " <<  1-h_reason_chi2_3b[i]->GetMean() << endl;
+	  cout << "fail due to chi2 = " << h_reason_chi2_3b[i]->GetMean() << endl;
+	  cout << "chicken ribs = " << gereuk_3b << endl;
+	}
+      else if(i==1)
+	{
+	  cout << endl;
+	  cout << "3B event high fitter" << endl;
+	  cout << "fail due to b-tagged jet config = "<< 1-h_reason_chi2_3b[i]->GetMean() << endl;
+	  cout << "fail due to chi2 = " << h_reason_chi2_3b[i]->GetMean() << endl;
+	  cout << "chicken ribs = " << gereuk_3b << endl;
+	}
+      else
+	{
+	  gr_reason_bjet_config_3b.SetPoint(gr_reason_bjet_config_3b.GetN(), signal_mass[i-2].Atof(), 1-h_reason_chi2_3b[i]->GetMean());
+	  gr_reason_chi2_3b.SetPoint(gr_reason_chi2_3b.GetN(), signal_mass[i-2].Atof(), h_reason_chi2_3b[i]->GetMean());
+	  gr_gereuk_3b.SetPoint(gr_gereuk_3b.GetN(), signal_mass[i-2].Atof(), gereuk_3b);
+	}
+    }
+  
+  TCanvas can_3b("can_3b", "can_3b", 800, 500);
+  can_3b.Draw();
+
+  gr_reason_chi2_3b.SetTitle("Reason of fitter failure, space to improve the fitter 3B");
+  gr_reason_chi2_3b.GetXaxis()->SetTitle("h^{#pm} signal mass [GeV}");
+  gr_reason_chi2_3b.GetYaxis()->SetTitle("Fraction");
+  gr_reason_chi2_3b.GetYaxis()->SetRangeUser(0, 1);
+  
+  gr_reason_chi2_3b.SetMarkerStyle(29);
+  gr_reason_chi2_3b.SetMarkerColor(4);
+  gr_reason_chi2_3b.SetLineColor(4);
+  gr_reason_chi2_3b.Draw();
+
+  gr_reason_bjet_config_3b.SetMarkerStyle(34);
+  gr_reason_bjet_config_3b.SetMarkerColor(6);
+  gr_reason_bjet_config_3b.SetLineColor(6);
+  gr_reason_bjet_config_3b.Draw("samepl");
+
+  gr_gereuk_3b.SetMarkerStyle(21);
+  gr_gereuk_3b.SetMarkerColor(8);
+  gr_gereuk_3b.SetLineColor(8);
+  gr_gereuk_3b.Draw("samepl");
+
+  TLegend tl_3b(0.15, 0.55, 0.35, 0.7);
+  tl_3b.AddEntry(&gr_reason_bjet_config_3b, "Frac_{b-jet Config.}", "lp");
+  tl_3b.AddEntry(&gr_reason_chi2_3b, "Frac_{#chi^{2} Eval.}", "lp");
+  tl_3b.AddEntry(&gr_gereuk_3b, "Chicken ribs", "lp");
+  tl_3b.Draw("same");
+    
+  can_3b.Print("Fitter_Fail_Reason_3B."+extension, extension);
+  
+  return;
+}//void Fitter_Performance::Investigation_Fitter_Failure_3B()
 
 //////////
 
@@ -330,6 +472,165 @@ void Fitter_Performance::Reconstruction_Result_Chi2_3B()
 
   return;
 }//void Fitter_Performance::Reconstruction_Result_Chi2_3B()
+
+//////////
+
+void Fitter_Performance::Reconstruction_Result_Chi2_Piece_2B()
+{
+  TCanvas* can_piece_2b;
+
+  TH1D* h_chi2_2b_piece[N_SAMPLE][N_CHI2_PIECE];
+  TH1D* h_chi2_2b_piece_ofs[N_SAMPLE][N_CHI2_PIECE];
+  TH1D* h_chi2_2b_piece_off[N_SAMPLE][N_CHI2_PIECE];
+  TPaveStats* stats_chi2_2b_piece_ofs[N_SAMPLE][N_CHI2_PIECE];
+  TPaveStats* stats_chi2_2b_piece_off[N_SAMPLE][N_CHI2_PIECE];
+  for(Int_t i=0; i<N_SAMPLE; i++)
+    {
+      can_piece_2b = new TCanvas("can_piece_2b", "can_piece_2b", 1000, 1200);
+      can_piece_2b->Divide(2, 5);
+
+      for(Int_t j=0; j<N_CHI2_PIECE; j++)
+	{
+	  can_piece_2b->GetPad(j+1)->SetLogy();
+
+	  TString h_name = "Chi2_Piece_2B_" + to_string(j);
+
+	  h_chi2_2b_piece[i][j] = (TH1D*)fin[0][i]->Get(h_name);
+	  h_chi2_2b_piece_ofs[i][j] = (TH1D*)fin[0][i]->Get(h_name+"_OFS");
+	  h_chi2_2b_piece_off[i][j] = (TH1D*)fin[0][i]->Get(h_name+"_OFF");
+
+	  h_chi2_2b_piece_ofs[i][j]->SetName("Origin finding succeed");
+	  h_chi2_2b_piece_off[i][j]->SetName("Origin finding fail");
+	  
+	  h_chi2_2b_piece_ofs[i][j]->SetLineColor(2);
+	  h_chi2_2b_piece_off[i][j]->SetLineColor(8);
+	  
+	  can_piece_2b->cd(j+1);
+	  
+	  h_chi2_2b_piece_ofs[i][j]->Draw();
+	  can_piece_2b->GetPad(j+1)->Update();
+	  stats_chi2_2b_piece_ofs[i][j] = (TPaveStats*)h_chi2_2b_piece_ofs[i][j]->FindObject("stats");
+	  
+	  h_chi2_2b_piece_off[i][j]->Draw();
+	  can_piece_2b->GetPad(j+1)->Update();
+	  stats_chi2_2b_piece_off[i][j] = (TPaveStats*)h_chi2_2b_piece_off[i][j]->FindObject("stats");
+
+	  if(j<4) h_name = "#chi^{2} from P_{T} of Jet" + to_string(j);
+	  else if(j==4) h_name = "#chi^{2} from P_{T} of lepton";
+	  else if(j==5) h_name = "#chi^{2} from x component of extra";
+	  else if(j==6) h_name = "#chi^{2} from y component of extra";
+	  else if(j==7) h_name = "#chi^{2} from leptonic W";
+	  else if(j==8) h_name = "#chi^{2} from leptonic t";
+	  else if(j==9) h_name = "#chi^{2} from hadronic t";
+	  h_name += " 2B";
+	  
+	  h_chi2_2b_piece[i][j]->SetTitle(h_name);
+	  h_chi2_2b_piece[i][j]->GetXaxis()->SetTitle("#chi^{2}");
+	  
+	  h_chi2_2b_piece[i][j]->Draw();
+	  h_chi2_2b_piece_ofs[i][j]->Draw("same");
+	  h_chi2_2b_piece_off[i][j]->Draw("same");
+
+	  stats_chi2_2b_piece_ofs[i][j]->SetY2NDC(0.95);
+	  stats_chi2_2b_piece_ofs[i][j]->SetY1NDC(0.75);
+	  stats_chi2_2b_piece_ofs[i][j]->Draw("same");
+
+	  stats_chi2_2b_piece_off[i][j]->SetY2NDC(0.7);
+	  stats_chi2_2b_piece_off[i][j]->SetY1NDC(0.50);
+	  stats_chi2_2b_piece_off[i][j]->Draw("same");
+	}//N_CHI2_PIECE
+      
+      TString name = "Chi2_Piece_";
+      if(i==0) name += "SM_TT";
+      else name += "CH_" + signal_mass[i-1];
+      name += "_OFS_OFF_Sep_2B.";
+      
+      can_piece_2b->Print(name+extension, extension);
+      
+      delete can_piece_2b;
+    }//N_SAMPLE
+  
+  return;
+}//void Fitter_Performance::Reconstruction_Result_Chi2_Piece_2B()
+
+//////////
+
+void Fitter_Performance::Reconstruction_Result_Chi2_Piece_3B()
+{
+  TCanvas* can_piece_3b;
+
+  for(Int_t i=0; i<N_SAMPLE+1; i++)
+    {
+      can_piece_3b = new TCanvas("can_piece_2b", "can_piece_2b", 1000, 1200);
+      can_piece_3b->Divide(2, 5);
+
+      TFile* fin_target = Get_Target_File(i);
+      
+      TH1D* h_chi2_3b_piece[N_SAMPLE+1][N_CHI2_PIECE];
+      TH1D* h_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
+      TH1D* h_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
+      TPaveStats* stats_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
+      TPaveStats* stats_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
+      for(Int_t j=0; j<N_CHI2_PIECE; j++)
+	{
+	  can_piece_3b->GetPad(j+1)->SetLogy();
+
+	  TString h_name = "Chi2_Piece_3B_" + to_string(j);
+	  
+	  h_chi2_3b_piece[i][j] = (TH1D*)fin_target->Get(h_name);
+	  h_chi2_3b_piece_ofs[i][j] = (TH1D*)fin_target->Get(h_name+"_OFS");
+	  h_chi2_3b_piece_off[i][j] = (TH1D*)fin_target->Get(h_name+"_OFF");
+
+	  h_chi2_3b_piece_ofs[i][j]->SetLineColor(2);
+	  h_chi2_3b_piece_off[i][j]->SetLineColor(8);
+
+	  can_piece_3b->cd(j+1);
+
+	  h_chi2_3b_piece_ofs[i][j]->Draw();
+	  can_piece_3b->GetPad(j+1)->Update();
+	  stats_chi2_3b_piece_ofs[i][j] = (TPaveStats*)h_chi2_3b_piece_ofs[i][j]->FindObject("stats");
+
+	  h_chi2_3b_piece_off[i][j]->Draw();
+	  can_piece_3b->GetPad(j+1)->Update();
+	  stats_chi2_3b_piece_off[i][j] = (TPaveStats*)h_chi2_3b_piece_off[i][j]->FindObject("stats");
+
+	  if(j<4) h_name = "#chi^{2} from P_{T} of Jet" + to_string(j);
+	  else if(j==4) h_name = "#chi^{2} from P_{T} of lepton";
+	  else if(j==5) h_name = "#chi^{2} from x component of extra";
+	  else if(j==6) h_name = "#chi^{2} from y component of extra";
+	  else if(j==7) h_name = "#chi^{2} from leptonic W";
+	  else if(j==8) h_name = "#chi^{2} from leptonic t";
+	  else if(j==9) h_name = "#chi^{2} from hadronic t";
+	  h_name += " 3B";
+	  
+	  h_chi2_3b_piece[i][j]->SetTitle(h_name);
+	  h_chi2_3b_piece[i][j]->GetXaxis()->SetTitle("#chi^{2}");
+	  
+	  h_chi2_3b_piece[i][j]->Draw();
+	  h_chi2_3b_piece_ofs[i][j]->Draw("same");
+	  h_chi2_3b_piece_off[i][j]->Draw("same");
+
+	  stats_chi2_3b_piece_ofs[i][j]->SetY2NDC(0.95);
+	  stats_chi2_3b_piece_ofs[i][j]->SetY1NDC(0.75);
+	  stats_chi2_3b_piece_ofs[i][j]->Draw("same");
+
+	  stats_chi2_3b_piece_off[i][j]->SetY2NDC(0.7);
+	  stats_chi2_3b_piece_off[i][j]->SetY1NDC(0.50);
+	  stats_chi2_3b_piece_off[i][j]->Draw("same");
+	}
+      
+      TString name = "Chi2_Piece_";
+      if(i==0) name += "SM_TT_Low_Mass";
+      else if(i==1) name += "SM_TT_High_Mass";
+      else name += "CH_" + signal_mass[i-2];
+      name += "_OFS_OFF_Sep_3B.";
+
+      can_piece_3b->Print(name+extension, extension);
+
+      delete can_piece_3b;
+    }//N_SAMPLE+1
+  return;
+}//void Fitter_Performance::Reconstruction_Result_Chi2_Piece_3B()
 
 //////////
 
