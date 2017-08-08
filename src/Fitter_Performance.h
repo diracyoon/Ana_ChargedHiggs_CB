@@ -1,5 +1,5 @@
-#ifndef __Fitter_Performance_H__
-#define __Fitter_Performance_H__
+#ifndef __Fitter_Performance_h__
+#define __Fitter_Performance_h__
 
 #include <iostream>
 
@@ -41,7 +41,7 @@ class Fitter_Performance : public TObject
  protected:
   TString extension;
   TString signal_mass[N_SIGNAL] = {"090", "100", "110", "120", "125", "130", "140", "150"};
-
+  
   //first index: no constraint, low mass, and high mass
   //second index: tt sample, charged higgs samples
   TFile* fin[3][N_SAMPLE];
@@ -51,4 +51,4 @@ class Fitter_Performance : public TObject
   ClassDef(Fitter_Performance, 1);
 };
 
-#endif /*__Fitter_Performance_H__*/
+#endif /*__Fitter_Performance_h__*/
