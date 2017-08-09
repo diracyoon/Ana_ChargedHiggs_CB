@@ -558,19 +558,19 @@ void Fitter_Performance::Reconstruction_Result_Chi2_Piece_2B()
 void Fitter_Performance::Reconstruction_Result_Chi2_Piece_3B()
 {
   TCanvas* can_piece_3b;
-
+  
+  TH1D* h_chi2_3b_piece[N_SAMPLE+1][N_CHI2_PIECE];
+  TH1D* h_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
+  TH1D* h_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
+  TPaveStats* stats_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
+  TPaveStats* stats_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
   for(Int_t i=0; i<N_SAMPLE+1; i++)
     {
-      can_piece_3b = new TCanvas("can_piece_2b", "can_piece_2b", 1000, 1200);
+      can_piece_3b = new TCanvas("can_piece_3b", "can_piece_3b", 1000, 1200);
       can_piece_3b->Divide(2, 5);
 
       TFile* fin_target = Get_Target_File(i);
-      
-      TH1D* h_chi2_3b_piece[N_SAMPLE+1][N_CHI2_PIECE];
-      TH1D* h_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
-      TH1D* h_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
-      TPaveStats* stats_chi2_3b_piece_ofs[N_SAMPLE+1][N_CHI2_PIECE];
-      TPaveStats* stats_chi2_3b_piece_off[N_SAMPLE+1][N_CHI2_PIECE];
+  
       for(Int_t j=0; j<N_CHI2_PIECE; j++)
 	{
 	  can_piece_3b->GetPad(j+1)->SetLogy();
