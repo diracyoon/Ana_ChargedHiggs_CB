@@ -133,7 +133,13 @@ void Jet_Selection_Performance::Reconstruction_Result_Mass_2B(const Int_t& selec
       stats_mass_2b_tf[i]->Draw("same");
     }//N_SAMPLE
 
-  can_mass_2b.Print("Mass_OFS_OFF_TF_Sep_2B_"+selection_type_print[selection]+"."+extension, extension);
+  TString print_name = "Mass_OFS_OFF_TF_Sep_2B_";
+  print_name += selection_type_print[selection];
+  print_name += "_Chi2_";
+  print_name += cut_on_chi2;
+  print_name += ".";
+  
+  can_mass_2b.Print(print_name+extension, extension);
   
   return;
 }//void Jet_Selection_Performance::Reconstruction_Result_Neutrino()
@@ -219,7 +225,13 @@ void Jet_Selection_Performance::Reconstruction_Result_Mass_3B(const Int_t& selec
       stats_mass_3b_tf[i]->Draw("same");
     }
 
-  can_mass_3b.Print("Mass_OFS_OFF_TF_Sep_3B_"+selection_type_print[selection]+"."+extension, extension);
+  TString print_name = "Mass_OFS_OFF_TF_Sep_3B_";
+  print_name +=selection_type_print[selection];
+  print_name +="_Chi2_";
+  print_name +=cut_on_chi2;
+  print_name += ".";
+  
+  can_mass_3b.Print(print_name+extension, extension);
     
   return;
 }//void Jet_Selection_Performance::Reconstruction_Result_Mass_3B(const Int_t& selection)
