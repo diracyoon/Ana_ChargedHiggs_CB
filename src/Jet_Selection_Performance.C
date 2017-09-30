@@ -712,7 +712,7 @@ void Jet_Selection_Performance::Signal_Fraction_Vs_Chi2_3B(const Int_t& selectio
   TGraph gr_chi2_dep_3b_ts_off[N_SAMPLE+1];
   TGraph gr_chi2_dep_3b_tf[N_SAMPLE+1];
   TLegend tl[N_SAMPLE+1];
-  for(Int_t i=0; i<N_SAMPLE; i++)
+  for(Int_t i=0; i<N_SAMPLE+1; i++)
     {
       TFile* fin_target = Get_Target_File("3B", selection, i);
       

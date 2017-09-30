@@ -5,5 +5,6 @@
 
 #pragma link C++ class Fitter_Performance+;
 #pragma link C++ class Jet_Selection_Performance+;
+#pragma link C++ class Validation+;
 
 #endif /*__ROOTCLING__*/

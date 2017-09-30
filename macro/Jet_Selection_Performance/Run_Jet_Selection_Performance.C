@@ -1,6 +1,6 @@
 void Run_Jet_Selection_Performance()
 {
-  Double_t cut_on_chi2 = 50;
+  Double_t cut_on_chi2 = 1;
   Int_t selection = 0;
   
   Jet_Selection_Performance* jet_selection_performance = new Jet_Selection_Performance("eps", cut_on_chi2);
