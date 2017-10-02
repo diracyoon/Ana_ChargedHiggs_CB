@@ -8,6 +8,7 @@
 #include <TNtuple.h>
 #include <TCanvas.h>
 #include <TH1D.h>
+#include <THStack.h>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ class Validation : public TObject
   Validation();
   ~Validation();
 
-  void Eta(const TString& target_object);
+  void Eta();
   
  protected:
   const Int_t n_mc_sample;
@@ -25,7 +26,9 @@ class Validation : public TObject
   
   TFile** fin_mc;
   TFile* fin_data;
-
+  
+  TFile* fout;
+  
   TNtuple** ntuple_mc;
   TNtuple* ntuple_data;
 
@@ -45,8 +48,12 @@ class Validation : public TObject
   Double_t jet3_pt;
 
   Double_t n_vertices;
-
+  Double_t n_b_tag;
+  
   Double_t weight;
+
+  void Compare();
+  void SetBranchAddress(TFile* fin, TNtuple*& ntuple);
   
   ClassDef(Validation, 1);
 };

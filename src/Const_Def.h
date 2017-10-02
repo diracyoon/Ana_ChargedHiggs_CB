@@ -8,4 +8,6 @@
 
 #define W_MASS 80
 
+#define TOTAL_LUMINOSITY 36.4466098
+
 #endif /*__Const_Def_H__*/
