@@ -9,6 +9,10 @@
 #include <TCanvas.h>
 #include <TH1D.h>
 #include <THStack.h>
+#include <TGraphErrors.h>
+#include <TMath.h>
+
+#include "Const_Def.h"
 
 using namespace std;
 
@@ -51,9 +55,29 @@ class Validation : public TObject
   Double_t n_b_tag;
   
   Double_t weight;
+  Double_t top_pair_reweight;
+  Double_t trigger_sf_down;
+  Double_t trigger_sf;
+  Double_t trigger_sf_up;
+  Double_t weight_by_trigger;
+  Double_t muon_id_sf_down;
+  Double_t muon_id_sf;
+  Double_t muon_id_sf_up;
+  Double_t muon_iso_sf_down;
+  Double_t muon_iso_sf;
+  Double_t muon_iso_sf_up;
+  Double_t muon_tracking_eff_sf;
 
-  void Compare();
+  void Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data);
+  void Compare_MC_Data(TH1D* histo_data, THStack* stack_mc, TGraphErrors* gr_comp);
+  Int_t Index_N_B_Tag();
+  void Make_Graph_Comparison(TGraphErrors***& gr_comp, const TString& target);
+  void Make_Histo_Data(TH1D***& histo_data, const TString& target);
+  void Make_Histo_MC(TH1D****& histo_mc, const TString& target);
+  void Make_Stack_MC(THStack***& stack_mc, const TString& target);
+  void Stack_MC_Histo(TH1D****& histo_mc, THStack***& stack_mc);
   void SetBranchAddress(TFile* fin, TNtuple*& ntuple);
+  void Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data);
   
   ClassDef(Validation, 1);
 };
