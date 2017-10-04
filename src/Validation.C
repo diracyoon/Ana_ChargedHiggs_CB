@@ -121,30 +121,30 @@ void Validation::Eta()
     }//n_event
   
   //make graph for comparison
-  TGraphErrors*** gr_comp = new TGraphErrors**[3];
+  TGraphErrors*** gr_comp = NULL;
+  Make_Graph_Comparison(gr_comp, "Eta");
+
+  //compare
   for(Int_t i=0; i<3; i++)
     {
-      gr_comp[i] = new TGraphErrors*[3];
-      for(Int_t j=0; j<3; j++)
-  	{
-  	  gr_comp[i][j] = new TGraphErrors();
-	  
-  	  Compare_MC_Data(histo_data[i][j], stack_mc[i][j], gr_comp[i][j]);
-  	}//n_object
+     for(Int_t j=0; j<3; j++)
+       {
+	 Compare_MC_Data(histo_data[i][j], stack_mc[i][j], gr_comp[i][j]);
+       }//n_object
     }//n_b_tag
 
   //save histograms, stacks
-  Write(histo_mc, stack_mc, histo_data);
+  Write(histo_mc, stack_mc, histo_data, gr_comp);
   
   //delete histograms, stacks
-  Clear(histo_mc, stack_mc, histo_data);
+  Clear(histo_mc, stack_mc, histo_data, gr_comp);
 
   return;
 }//void Validatation::Eta()
 
 //////////
 
-void Validation::Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data)
+void Validation::Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data, TGraphErrors***& gr_comp)
 {
   //delete histo_mc
   for(Int_t i=0; i<3; i++)
@@ -182,6 +182,17 @@ void Validation::Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_
       delete[] histo_data[i];
     }//n_b_tag
   delete[] histo_data;
+
+  //delete gr_comp
+   for(Int_t i=0; i<3; i++)
+    {
+      for(Int_t j=0; j<3; j++)
+        {
+	  delete gr_comp[i][j];
+	}
+      delete[] gr_comp[i];
+    }
+   delete[] gr_comp;
   
   return;
 }//void Validation::Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data)
@@ -201,15 +212,19 @@ void Validation::Compare_MC_Data(TH1D* histo_data, THStack* stack_mc, TGraphErro
       if(1e-1<content_mc)
 	{
 	  Double_t bin_center = histo_data->GetBinCenter(i+1);
-	  Double_t bin_half_width = histo_data->GetBinWidth(i+1);
+
+	  Double_t bin_half_width = histo_data->GetBinWidth(i+1)/2.;
+
 	  Double_t ratio = content_data/content_mc;
 	  
 	  Double_t ratio_error = TMath::Power(error_data, 2.0)/TMath::Power(content_mc, 2.);
 	  ratio_error += TMath::Power(content_data, 2.0)/TMath::Power(content_mc, 4.0)*TMath::Power(error_mc, 2.0);
 	  ratio_error = TMath::Sqrt(ratio_error);
-	  
-	  gr_comp->SetPoint(gr_comp->GetN(), bin_center, ratio);
-	  gr_comp->SetPointError(gr_comp->GetN(), bin_half_width, ratio_error);
+
+	  Int_t n_point = gr_comp->GetN();
+
+	  gr_comp->SetPoint(n_point, bin_center, ratio);
+	  gr_comp->SetPointError(n_point, bin_half_width, ratio_error);
 	}
     }//bin number
   
@@ -233,7 +248,29 @@ Int_t Validation::Index_N_B_Tag()
 
 void Validation::Make_Graph_Comparison(TGraphErrors***& gr_comp, const TString& target)
 {
-  
+  gr_comp = new TGraphErrors**[3];
+  for(Int_t i=0; i<3; i++)
+    {
+      TString b_tag = to_string(i+1) + "B";
+      
+      gr_comp[i] = new TGraphErrors*[3];
+      for(Int_t j=0; j<3; j++)
+        {
+	  TString object;
+          if(j==0) object = "Muon";
+          else if(j==1) object = "Jet0";
+          else if(j==2) object = "Jet1";
+	  
+          gr_comp[i][j] = new TGraphErrors();
+
+	  TString gr_name = target + "_" + b_tag + "_" + object + "_Comparision";
+
+	  gr_comp[i][j]->SetTitle(gr_name);
+	  gr_comp[i][j]->SetName(gr_name);
+        }//n_object
+    }//n_b_tag
+
+  return;
 }//void Validation::Make_Graph_Comparison(TGraphErrors***& gr_comp, const TString& target)
 
 //////////
@@ -382,7 +419,7 @@ void Validation::SetBranchAddress(TFile* fin, TNtuple*& ntuple)
 
 //////////
 
-void Validation::Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data)
+void Validation::Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data, TGraphErrors***& gr_comp)
 {
   //save histograms for mc
   for(Int_t i=0; i<3; i++)
@@ -415,6 +452,16 @@ void Validation::Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_
 	  fout->cd();
 	  histo_data[i][j]->Write();
         }//n_object
+    }//n_b_tag
+
+   //save graph for comparison
+    for(Int_t i=0; i<3; i++)
+    {
+      for(Int_t j=0; j<3; j++)
+        {
+          fout->cd();
+	  gr_comp[i][j]->Write();
+	}//n_object
     }//n_b_tag
    
   return;

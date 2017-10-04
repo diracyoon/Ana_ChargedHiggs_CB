@@ -68,7 +68,7 @@ class Validation : public TObject
   Double_t muon_iso_sf_up;
   Double_t muon_tracking_eff_sf;
 
-  void Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data);
+  void Clear(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data, TGraphErrors***& gr_comp);
   void Compare_MC_Data(TH1D* histo_data, THStack* stack_mc, TGraphErrors* gr_comp);
   Int_t Index_N_B_Tag();
   void Make_Graph_Comparison(TGraphErrors***& gr_comp, const TString& target);
@@ -77,7 +77,7 @@ class Validation : public TObject
   void Make_Stack_MC(THStack***& stack_mc, const TString& target);
   void Stack_MC_Histo(TH1D****& histo_mc, THStack***& stack_mc);
   void SetBranchAddress(TFile* fin, TNtuple*& ntuple);
-  void Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data);
+  void Write(TH1D****& histo_mc, THStack***& stack_mc, TH1D***& histo_data, TGraphErrors***& gr_comp);
   
   ClassDef(Validation, 1);
 };
